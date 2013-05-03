@@ -17,8 +17,10 @@ int LED4R = 29;
 int LED4G = 30;
 int LED4B = 31;
 
-int data = 12;
-int clock = 13;
+int data = 18;
+int clock = 19;
+
+int statusLED = 13;
 
 //Matrix Cordinates
 // 0,0 (NC)
@@ -34,7 +36,7 @@ byte segmentDisplay[5][7][2] = {{{9,1},{9,2},{9,0},{6,2},{6,3},{8,3},{5,3}},
                                  {{2,0},{3,1},{2,1},{2,2},{3,2},{0,2},{2,3}}};
 
 byte digitDisplay[10][7] = {{0,0,0,1,0,0,0},
-                            {1,1,0,1,1,1,0},
+                            {1,1,0,1,1,0,1},
                             {0,1,0,0,0,1,0},
                             {0,1,0,0,1,0,0},
                             {1,0,0,0,1,0,1},
@@ -96,6 +98,8 @@ void setup(){
   pinMode(LED4G, OUTPUT);
   pinMode(LED4B, OUTPUT);
   
+  pinMode(statusLED, OUTPUT);
+  
   pinMode(data, OUTPUT);
   pinMode(clock, OUTPUT);
   
@@ -128,7 +132,7 @@ void loop(){
   if(Serial.available() > 0){
     serTemp = Serial.read();
     
-    if(serTemp = '\n'){
+    if(serTemp == '\n'){
       processSerial();
     }
     else{
@@ -139,27 +143,53 @@ void loop(){
 }
 
 void processSerial(){
+  digitalWrite(statusLED, HIGH);
+  
   switch (buffCount){
-    case 3:
-      setSegment(0,-1);
-      setSegment(1,-1);
-      setSegment(2,0);
-      setSegment(3,0);
-      setSegment(4,0);
-      break;
     case 4:
       setSegment(0,-1);
-      setSegment(1,0);
-      setSegment(2,0);
-      setSegment(3,0);
-      setSegment(4,0);
+      setSegment(1,-1);
+      setSegment(2,inBuff[0]-48);
+      setSegment(3,inBuff[1]-48);
+      setSegment(4,inBuff[2]-48);
+      serSymbol(inBuff[3]);
       break;
     case 5:
-      setSegment(0,0);
-      setSegment(1,0);
-      setSegment(2,0);
-      setSegment(3,0);
-      setSegment(4,0);
+      setSegment(0,-1);
+      setSegment(1,inBuff[0]-48);
+      setSegment(2,inBuff[1]-48);
+      setSegment(3,inBuff[2]-48);
+      setSegment(4,inBuff[3]-48);
+      serSymbol(inBuff[4]);
+      break;
+    case 6:
+      setSegment(0,inBuff[0]-48);
+      setSegment(1,inBuff[1]-48);
+      setSegment(2,inBuff[2]-48);
+      setSegment(3,inBuff[3]-48);
+      setSegment(4,inBuff[4]-48);
+      serSymbol(inBuff[5]);
+      break;
+  }
+  
+  buffCount = 0;
+  
+  digitalWrite(statusLED,LOW);
+}
+
+void serSymbol(byte a){
+  switch(a){
+    case 'u':
+      setSymbol('u',HIGH);
+      setSymbol('d',LOW);
+      break;
+    case 'd':
+      setSymbol('u',LOW);
+      setSymbol('d',HIGH);
+      break;
+    case 'n':
+      setSymbol('u',LOW);
+      setSymbol('d',LOW);
       break;
   }
 }
@@ -233,7 +263,7 @@ void setSegment(int seg, int num){
 void setSymbol(char symbol, int state){
   switch (symbol){
     case '$':
-      if (state = HIGH){
+      if (state == HIGH){
         greenOn[dollarSign[0]][dollarSign[1]] = 0;
       }
       else{
@@ -241,7 +271,7 @@ void setSymbol(char symbol, int state){
       }
       break;
     case '.':
-      if (state = HIGH){
+      if (state == HIGH){
         blueOn[decimalPoint[0]][decimalPoint[1]] = 0;
       }
       else{
@@ -249,7 +279,7 @@ void setSymbol(char symbol, int state){
       }
       break;
     case 'u':
-      if (state = HIGH){
+      if (state == HIGH){
         greenOn[upArrow[0]][upArrow[1]] = 0;
       }
       else{
@@ -257,7 +287,7 @@ void setSymbol(char symbol, int state){
       }
       break;
     case 'd':
-      if (state = HIGH){
+      if (state == HIGH){
         redOn[downArrow[0]][downArrow[1]] = 0;
       }
       else{
