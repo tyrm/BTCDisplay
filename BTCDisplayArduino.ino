@@ -1,3 +1,8 @@
+//Varialbes
+int buffCount = 0;
+byte serTemp;
+byte inBuff[20];
+
 //Pin Definitions
 int LED1R = 20;
 int LED1G = 21;
@@ -73,7 +78,7 @@ byte greenOn[10][4] = {{1,1,1,1},
                        {1,1,1,1},
                        {1,1,1,1}};
 
-void setup() {
+void setup(){
   //Open Serial
   Serial.begin(9600);
   
@@ -116,17 +121,53 @@ void setup() {
   setSegment(4,0);
 }
 
-void loop() {
+void loop(){
   displayStuff(1);
   
+  // Process Data
+  if(Serial.available() > 0){
+    serTemp = Serial.read();
+    
+    if(serTemp = '\n'){
+      processSerial();
+    }
+    else{
+      inBuff[buffCount] = serTemp;
+      buffCount++;
+    }
+  }
+}
+
+void processSerial(){
+  switch (buffCount){
+    case 3:
+      setSegment(0,-1);
+      setSegment(1,-1);
+      setSegment(2,0);
+      setSegment(3,0);
+      setSegment(4,0);
+      break;
+    case 4:
+      setSegment(0,-1);
+      setSegment(1,0);
+      setSegment(2,0);
+      setSegment(3,0);
+      setSegment(4,0);
+      break;
+    case 5:
+      setSegment(0,0);
+      setSegment(1,0);
+      setSegment(2,0);
+      setSegment(3,0);
+      setSegment(4,0);
+      break;
+  }
 }
 
 void displayStuff(int scanSpeed){
-  
   //Prepare 1 High Pin on Shift Register
   digitalWrite(data, HIGH);
   digitalWrite(clock, HIGH);
-  //delay(1);
   digitalWrite(clock, LOW);
   digitalWrite(data, LOW);
   
@@ -176,12 +217,12 @@ void displayStuff(int scanSpeed){
 //Changes a Segment to a number
 // set to -1 to turn off
 void setSegment(int seg, int num){
-  if (num != -1) {
+  if (num != -1){
     for(int i = 0; i < 7; i++){
       blueOn[segmentDisplay[seg][i][0]][segmentDisplay[seg][i][1]] = digitDisplay[num][i];
     }
   }
-  else {
+  else{
     for(int i = 0; i < 7; i++){
       blueOn[segmentDisplay[seg][i][0]][segmentDisplay[seg][i][1]] = 1;
     }
@@ -190,36 +231,36 @@ void setSegment(int seg, int num){
 
 //Changes Display Symbols
 void setSymbol(char symbol, int state){
-  switch (symbol) {
+  switch (symbol){
     case '$':
-      if (state = HIGH) {
+      if (state = HIGH){
         greenOn[dollarSign[0]][dollarSign[1]] = 0;
       }
-      else {
+      else{
         greenOn[dollarSign[0]][dollarSign[1]] = 1;
       }
       break;
     case '.':
-      if (state = HIGH) {
+      if (state = HIGH){
         blueOn[decimalPoint[0]][decimalPoint[1]] = 0;
       }
-      else {
+      else{
         blueOn[decimalPoint[0]][decimalPoint[1]] = 1;
       }
       break;
     case 'u':
-      if (state = HIGH) {
+      if (state = HIGH){
         greenOn[upArrow[0]][upArrow[1]] = 0;
       }
-      else {
+      else{
         greenOn[upArrow[0]][upArrow[1]] = 1;
       }
       break;
     case 'd':
-      if (state = HIGH) {
+      if (state = HIGH){
         redOn[downArrow[0]][downArrow[1]] = 0;
       }
-      else {
+      else{
         redOn[downArrow[0]][downArrow[1]] = 1;
       }
       break;
