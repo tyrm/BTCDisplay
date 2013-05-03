@@ -83,34 +83,58 @@ void setup() {
 }
 
 void loop() {
+  displayStuff(1);
+  
+}
+
+void displayStuff(int scanSpeed){
+  
+  //Prepare 1 High Pin on Shift Register
   digitalWrite(data, HIGH);
   digitalWrite(clock, HIGH);
-
-  delay(1);
-
+  //delay(1);
   digitalWrite(clock, LOW);
   digitalWrite(data, LOW);
   
-  
+  //Scan through 10 pixel rows
   for(int i = 0; i < 10; i++){
+    //Red Pixels
     digitalWrite(LED1R, redOn[i][0]);
     digitalWrite(LED2R, redOn[i][1]);
     digitalWrite(LED3R, redOn[i][2]);
     digitalWrite(LED4R, redOn[i][3]);
     
-    delay(1);
+    //Green Pixels
+    digitalWrite(LED1G, greenOn[i][0]);
+    digitalWrite(LED2G, greenOn[i][1]);
+    digitalWrite(LED3G, greenOn[i][2]);
+    digitalWrite(LED4G, greenOn[i][3]);
     
+    //Blue Pixels
+    digitalWrite(LED1B, blueOn[i][0]);
+    digitalWrite(LED2B, blueOn[i][1]);
+    digitalWrite(LED3B, blueOn[i][2]);
+    digitalWrite(LED4B, blueOn[i][3]);
+    
+    //Display each row for "scanSpeed" milliseconds
+    delay(scanSpeed);
+    
+    //Turn Off All Pixels before Changing Row to prevent light bleed.
     digitalWrite(LED1R, HIGH);
     digitalWrite(LED2R, HIGH);
     digitalWrite(LED3R, HIGH);
     digitalWrite(LED4R, HIGH);
+    digitalWrite(LED1G, HIGH);
+    digitalWrite(LED2G, HIGH);
+    digitalWrite(LED3G, HIGH);
+    digitalWrite(LED4G, HIGH);
+    digitalWrite(LED1B, HIGH);
+    digitalWrite(LED2B, HIGH);
+    digitalWrite(LED3B, HIGH);
+    digitalWrite(LED4B, HIGH);
     
+    //Change Row
     digitalWrite(clock, HIGH);
     digitalWrite(clock, LOW);
   }
-
-
-
-    
-
 }
