@@ -110,6 +110,10 @@ void setup() {
   
   setSymbol('$',HIGH); //Turn on '$'
   setSymbol('.',HIGH); //Turn on decimal
+  
+  setSegment(2,0);
+  setSegment(3,0);
+  setSegment(4,0);
 }
 
 void loop() {
@@ -169,10 +173,18 @@ void displayStuff(int scanSpeed){
   }
 }
 
-//Changes a Segment to a numbert
+//Changes a Segment to a number
+// set to -1 to turn off
 void setSegment(int seg, int num){
-  for(int i = 0; i < 7; i++){
-    blueOn[segmentDisplay[seg][i][0]][segmentDisplay[seg][i][1]] = digitDisplay[num][i];
+  if (num != -1) {
+    for(int i = 0; i < 7; i++){
+      blueOn[segmentDisplay[seg][i][0]][segmentDisplay[seg][i][1]] = digitDisplay[num][i];
+    }
+  }
+  else {
+    for(int i = 0; i < 7; i++){
+      blueOn[segmentDisplay[seg][i][0]][segmentDisplay[seg][i][1]] = 1;
+    }
   }
 }
 
