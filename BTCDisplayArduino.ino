@@ -22,7 +22,7 @@ byte decimalPoint[2] = {1,3};
 byte upArrow[2] =      {0,1};
 byte downArrow[2] =    {0,3};
 
-byte segmentDisplays[5][7][2] = {{{9,1},{9,2},{9,0},{6,2},{6,3},{8,3},{5,3}},
+byte segmentDisplay[5][7][2] = {{{9,1},{9,2},{9,0},{6,2},{6,3},{8,3},{5,3}},
                                  {{6,0},{6,1},{5,1},{5,2},{4,3},{4,2},{7,3}},
                                  {{5,0},{8,2},{8,0},{8,1},{4,1},{7,1},{7,2}},
                                  {{7,0},{4,0},{3,0},{1,0},{1,1},{1,2},{3,3}},
@@ -74,8 +74,10 @@ byte greenOn[10][4] = {{1,1,1,1},
                        {1,1,1,1}};
 
 void setup() {
+  //Open Serial
   Serial.begin(9600);
   
+  //Set Pin Modes
   pinMode(LED1R, OUTPUT);
   pinMode(LED1G, OUTPUT);
   pinMode(LED1B, OUTPUT);
@@ -92,8 +94,7 @@ void setup() {
   pinMode(data, OUTPUT);
   pinMode(clock, OUTPUT);
   
-  digitalWrite(data, LOW);
-  
+  //Turn off all LEDS
   digitalWrite(LED1R, HIGH);
   digitalWrite(LED1G, HIGH);
   digitalWrite(LED1B, HIGH);
@@ -106,6 +107,9 @@ void setup() {
   digitalWrite(LED4R, HIGH);
   digitalWrite(LED4G, HIGH);
   digitalWrite(LED4B, HIGH);
+  
+  setSymbol('$',HIGH); //Turn on '$'
+  setSymbol('.',HIGH); //Turn on decimal
 }
 
 void loop() {
@@ -162,5 +166,50 @@ void displayStuff(int scanSpeed){
     //Change Row
     digitalWrite(clock, HIGH);
     digitalWrite(clock, LOW);
+  }
+}
+
+//Changes a Segment to a numbert
+void setSegment(int seg, int num){
+  for(int i = 0; i < 7; i++){
+    blueOn[segmentDisplay[seg][i][0]][segmentDisplay[seg][i][1]] = digitDisplay[num][i];
+  }
+}
+
+//Changes Display Symbols
+void setSymbol(char symbol, int state){
+  switch (symbol) {
+    case '$':
+      if (state = HIGH) {
+        greenOn[dollarSign[0]][dollarSign[1]] = 0;
+      }
+      else {
+        greenOn[dollarSign[0]][dollarSign[1]] = 1;
+      }
+      break;
+    case '.':
+      if (state = HIGH) {
+        blueOn[decimalPoint[0]][decimalPoint[1]] = 0;
+      }
+      else {
+        blueOn[decimalPoint[0]][decimalPoint[1]] = 1;
+      }
+      break;
+    case 'u':
+      if (state = HIGH) {
+        greenOn[upArrow[0]][upArrow[1]] = 0;
+      }
+      else {
+        greenOn[upArrow[0]][upArrow[1]] = 1;
+      }
+      break;
+    case 'd':
+      if (state = HIGH) {
+        redOn[downArrow[0]][downArrow[1]] = 0;
+      }
+      else {
+        redOn[downArrow[0]][downArrow[1]] = 1;
+      }
+      break;
   }
 }
