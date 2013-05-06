@@ -12,11 +12,14 @@ def getString():
   global lastPrice
 
   data = requests.get('http://data.mtgox.com/api/2/BTCUSD/money/ticker')
-
-  goxData = data.json()
-
-  newPrice = int(goxData['data']['sell']['value_int'])
-  price =  str(goxData['data']['sell']['value_int'])
+  try:
+    goxData = data.json()
+  except:
+    print "ERROR data: "+data.text
+    retStr = str(lastPrice)
+    return retStr[:-3]
+  newPrice = int(goxData['data']['last']['value_int'])
+  price =  str(goxData['data']['last']['value_int'])
 
   retStr = str(price[:-3])
 
@@ -27,7 +30,7 @@ def getString():
   else:
     retStr = retStr+'n'
 
-  lastPrice = int(goxData['data']['sell']['value_int'])
+  lastPrice = int(goxData['data']['last']['value_int'])
 
   return retStr
 
